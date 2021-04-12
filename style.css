@@ -1,0 +1,145 @@
+* {
+    --maze-width: 600px;
+    --maze-height: var(--maze-width);
+    --node-size: calc(var(--maze-width)/30);   /* no. of rows = no. of columns = 30 */
+
+    --start-color:       #7cfc00;
+    --finish-color:      #ff6347;
+    --path-color:        #ecff16;
+    --visited-node-color:#c486ff;
+    --wall-color:        #000000;
+    --border-color:      #555555;
+    --button-color:      #ffa500;
+    
+    font-family: 'Courier New', Courier, monospace;
+    font-size: large;
+}
+
+body {
+    background-color: #b6e4bc;
+    margin: 0;
+    padding: 0;
+}
+
+.button-container {
+    text-align: center;
+    margin: 10px;
+}
+
+.btn {
+    position: relative;
+    background-color: var(--button-color);
+    padding: .4rem;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    box-shadow:0px 3px #ffbf48;
+    cursor: pointer;
+}
+.btn:active {
+    top: 3px;
+    box-shadow:0px 0px;
+}
+
+
+.disable-button:active {
+    top: 0;
+    box-shadow:0px 3px #ffbf48;
+}
+.disable-button {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.btn:first-child {
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+.btn:last-child {
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+
+.maze-container {
+    background-color: #fffdd1;
+    width: var(--maze-width);
+    height: var(--maze-height);
+    border: var(--border-color) 5px solid;
+    margin: 15px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.node {
+    cursor: pointer;
+    box-sizing: border-box;
+    width: var(--node-size);
+    height: var(--node-size);
+    border:  1px solid var(--border-color);
+}
+
+.start {
+    background-color: var(--start-color);
+}
+.finish {
+    background-color: var(--finish-color);
+}
+
+.visited {
+    animation-name: visitedAnimation;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    
+}
+
+.wall {
+    background-color: var(--wall-color);
+    border: #252525 solid 1px;
+}
+
+.path {
+    animation-name: pathAnimation;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes visitedAnimation {
+    0%{
+        transform: scale(0);
+        border-radius: 100%;
+    }
+
+    50%{
+        background-color: aquamarine;
+    }
+
+    75%{
+        transform: scale(1.2);
+    }
+
+    100%{
+        transform: scale(1);
+        background-color: var(--visited-node-color);
+    }
+}
+
+@keyframes pathAnimation {
+    0%{
+        transform: scale(0);
+        border-radius: 100%;
+
+    }
+
+    50%{
+        transform: scale(1.2);
+    }
+
+    100%{
+        transform: scale(1);
+        background-color: var(--path-color);
+    }
+}
