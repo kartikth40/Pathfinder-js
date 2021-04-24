@@ -1,25 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pathfinder visualizer</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module" defer="" src="app.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="button-container">
+            <div class="dropdown">
+                <input type="button" class="btn" id="select-algo" value="Dijkstra">
+                <div class="dropdown-arrow"></div>
+                <div class="dropdown-content">
+                    <ul>
+                        <a href="#" class="dropdown-element">Dijkstra</a>
+                        <a href="#" class="dropdown-element">A Star</a>
+                    </ul>
+                </div>
+            </div>
             <input type="button" class="btn" id="start-visualization" value="Start Visualization">
             <input type="button" class="btn" id="refresh-page" value="Reset The Board">
         </div>
 
         <div class="maze-container" draggable="false" ondragstart="return false;"></div>
-    </div>
 
-</body>
-<script src="app.js"></script>
 
-</html>
+
+</body></html>

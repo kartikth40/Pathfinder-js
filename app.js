@@ -1,3 +1,5 @@
+import visualizeDijkstra from "./dijkstra.js"
+import visualizeAStar from "./A_star.js"
 
 const mazeSize = 30
 const grid = []
@@ -5,6 +7,11 @@ let isPressed = false
 let isStarted = false
 let startNode = []
 let finishNode = []
+let myStorage = window.sessionStorage
+if(myStorage.getItem("algo") === null) myStorage.setItem("algo", "Dijkstra")
+let algo = myStorage.getItem("algo")
+document.querySelector("#select-algo").value = algo
+console.log(algo)
 
 main()
 
@@ -53,7 +60,9 @@ function setupVisualizerBTN() {
 
 function startVis() {
     if (!Array.isArray(startNode) && !Array.isArray(finishNode)) {
-        visualizeDijkstra()
+        isStarted = true
+        if(algo === "Dijkstra") visualizeDijkstra(grid, startNode, finishNode)
+        else visualizeAStar(grid, startNode, finishNode)
         document.querySelector("#start-visualization").removeEventListener("click", startVis)
     }
     else alert("ADD START AND END NODES")
@@ -65,94 +74,33 @@ function setupResetBTN() {
     })
 }
 
-function dijkstra(startNode, finishNode, grid) {
-    isStarted = true
-    startNode.distance = 0
-    const visitedNodesInOrder = []
-    const unvisitedNodes = grid.slice().flat()
-    while (unvisitedNodes.length) {
-        sortNodesByDistance(unvisitedNodes)
-        const closestNode = unvisitedNodes.shift()
-        if (!!closestNode.isWall) continue
-        if (closestNode.distance === Infinity) return visitedNodesInOrder
+document.querySelectorAll(".dropdown-element").forEach((element) => {
+    element.addEventListener("click", e => {
+        algo = e.target.innerText
+        myStorage.setItem("algo", algo)
+document.querySelector("#select-algo").value = algo
+document.querySelector(".dropdown-content").classList.toggle("show")
 
-        closestNode.isVisited = true
-        visitedNodesInOrder.push(closestNode)
-        if (closestNode === finishNode) return visitedNodesInOrder
-        updateNeighborNodes(grid, closestNode)
-    }
-}
 
-function visualizeDijkstra() {
-    if (isStarted) return
-    document.querySelector("#start-visualization").classList.add("disable-button")
-    const visitedNodesInOrder = dijkstra(startNode, finishNode, grid)
-    const shortestPathInOrder = getShortestPathInOrder(finishNode)
-    animateDijkstra(visitedNodesInOrder, shortestPathInOrder)
-}
-
-function animateDijkstra(visitedNodesInOrder, shortestPathInOrder) {
-    for (let i = 1; i <= visitedNodesInOrder.length; i++) {
-        if (i === visitedNodesInOrder.length) {
-            setTimeout(() => {
-                animateShortestPath(shortestPathInOrder)
-            }, 10 * i);
-            return
-        }
-        if (i === visitedNodesInOrder.length - 1) continue
-        if (visitedNodesInOrder[i] === undefined) console.log(i)
-        setTimeout(() => {
-            const node = visitedNodesInOrder[i]
-            document.getElementById(node.id).classList.add("visited")
-        }, 10 * i);
-    }
-}
-
-function animateShortestPath(shortestPathInOrder) {
-    if (shortestPathInOrder.length === 1) {
-        alert("NO PATH FOUND")
-        return
-    }
-    for (let i = 1; i < shortestPathInOrder.length - 1; i++) {
-        setTimeout(() => {
-            const node = shortestPathInOrder[i]
-            document.getElementById(node.id).classList.add("path")
-        }, 10 * 5 * i);
-    }
-}
-
-function sortNodesByDistance(unvisitedNodes) {
-    unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
-}
-
-function updateNeighborNodes(grid, node) {
-    const neighbors = getNeighbors(grid, node)
-    neighbors.forEach(neighbor => {
-        neighbor.distance = node.distance + 1
-        neighbor.prevNode = node
     })
-}
+})
 
-function getNeighbors(grid, node) {
-    neighbors = []
-    const { row, col } = node
-    if (row > 0) neighbors.push(grid[row - 1][col])
-    if (col < grid.length - 1) neighbors.push(grid[row][col + 1])
-    if (row < grid.length - 1) neighbors.push(grid[row + 1][col])
-    if (col > 0) neighbors.push(grid[row][col - 1])
+document.querySelector("#select-algo").addEventListener("click", () => {
+    document.querySelector(".dropdown-content").classList.toggle("show")
+})
 
-    return neighbors.filter(neighbor => !neighbor.isVisited)
-}
 
-function getShortestPathInOrder(finishNode) {
-    const shortestPathInOrder = []
-    let currentNode = finishNode
-    while (currentNode !== null) {
-        shortestPathInOrder.unshift(currentNode)
-        currentNode = currentNode.prevNode
+window.onclick = event => {
+    if (event.target.id !== "select-algo") {
+      let openDropdown = document.querySelector(".dropdown-content");
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
     }
-    return shortestPathInOrder
-}
+  } 
+
+
+
 
 function handleMouseEvents() {
     let counter = 0
@@ -164,8 +112,7 @@ function handleMouseEvents() {
             if (counter > 1) {
                 mouseDownEvent(row, col)
             } else {
-                addStartFinishNodes(row, col, counter)
-                counter++
+                counter = addStartFinishNodes(row, col, counter)
             }
 
         })
@@ -211,10 +158,11 @@ function addStartFinishNodes(row, col, counter) {
         startNode = grid[row][col]
         document.getElementById(grid[row][col].id).classList.add("start")
     }
-    else if (counter === 1) {
+    else if (counter === 1 && grid[row][col] !== startNode) {
         grid[row][col].isFinish = true
         finishNode = grid[row][col]
         document.getElementById(grid[row][col].id).classList.add("finish")
     }
-    else return
+    else return counter
+    return ++counter
 }

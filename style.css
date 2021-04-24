@@ -9,7 +9,10 @@
     --visited-node-color:#c486ff;
     --wall-color:        #000000;
     --border-color:      #555555;
-    --button-color:      #ffa500;
+    --button-color:      #fbff00;
+    --button-hover-color:#f4f800;
+
+    --arrow-top: 50%;
     
     font-family: 'Courier New', Courier, monospace;
     font-size: large;
@@ -36,11 +39,62 @@ body {
     box-shadow:0px 3px #ffbf48;
     cursor: pointer;
 }
+.btn:hover {
+    background-color: var(--button-hover-color);
+}
 .btn:active {
     top: 3px;
     box-shadow:0px 0px;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#select-algo {
+    min-width: 7rem;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--button-color);
+    border-radius: 20px 0 0 20px;
+    box-shadow:3px 3px 10px #ffbf48;
+}
+.dropdown-content a {
+    text-decoration: none;
+    padding: 0.4rem;
+    display: block;
+}
+.dropdown-content a:hover {
+    --button-hover-color:#d0ff00;
+    background-color: var(--button-hover-color);
+    border-radius: 20px 0 0 20px;
+}
+
+.dropdown-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid black;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    position: absolute;
+    top: var(--arrow-top);
+    transform: translate(-50%, -50%);
+    right: 0.1rem;
+}
+.dropdown:active .dropdown-arrow{
+    --arrow-top: 20px;
+}
+
+.show {
+    display: block;
+    z-index: 1;
+}
 
 .disable-button:active {
     top: 0;
@@ -102,7 +156,7 @@ body {
 
 .path {
     animation-name: pathAnimation;
-    animation-duration: 1s;
+    animation-duration: .4s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
 }
@@ -114,9 +168,9 @@ body {
     }
 
     50%{
-        background-color: aquamarine;
+        background-color: rgb(255, 164, 247);
     }
-
+    
     75%{
         transform: scale(1.2);
     }
