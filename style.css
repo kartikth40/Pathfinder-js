@@ -1,14 +1,20 @@
 * {
-    --maze-width: 600px;
-    --maze-height: var(--maze-width);
-    --node-size: calc(var(--maze-width)/30);   /* no. of rows = no. of columns = 30 */
+    --maze-height: 80vh;
+    --maze-width: calc(2.5 * var(--maze-height));
+    --cols: 70;
+    --node-size: calc(var(--maze-width)/var(--cols));
 
-    --start-color:       #7cfc00;
-    --finish-color:      #ff6347;
-    --path-color:        #ecff16;
-    --visited-node-color:#c486ff;
+    --maze-color:        #ffffff;
+    --start-color:       #0dff00;
+    --finish-color:      #ff684d;
+    --path-color-astar:        #87ff93;
+    --path-color-dij:        #001aff;
+    --path-color-overlap:        #5ffff2;
+    --visited-node-color-astar:rgba(217, 175, 255, .5);
+    --visited-node-color-dij:rgb(175, 218, 255, .5);
+    --visited-node-color-overlap:rgba(69, 87, 255, 0.5);
     --wall-color:        #000000;
-    --border-color:      #555555;
+    --border-color:      #000000;
     --button-color:      #fbff00;
     --button-hover-color:#f4f800;
 
@@ -19,7 +25,7 @@
 }
 
 body {
-    background-color: #b6e4bc;
+    background-color: #fff;
     margin: 0;
     padding: 0;
 }
@@ -93,7 +99,7 @@ body {
 
 .show {
     display: block;
-    z-index: 1;
+    z-index: 10;
 }
 
 .disable-button:active {
@@ -117,10 +123,10 @@ body {
 
 
 .maze-container {
-    background-color: #fffdd1;
+    background-color: var(--maze-color);
     width: var(--maze-width);
     height: var(--maze-height);
-    border: var(--border-color) 5px solid;
+    border: var(--border-color) 2px solid;
     margin: 15px auto 0;
     display: flex;
     flex-wrap: wrap;
@@ -131,37 +137,101 @@ body {
     box-sizing: border-box;
     width: var(--node-size);
     height: var(--node-size);
-    border:  1px solid var(--border-color);
+    border:  .1px solid rgba(0, 0, 0,.05);
 }
 
-.start {
+.start, .finish {
+ position: relative;  
+}
+.start.animate, .finish.animate {
+    background-color: var(--visited-node-color-dij);
+}
+
+.start::before, .finish::before {
+    position: absolute;
+    inset:0;
+    content: '';
+    z-index: 1;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+.start::before {
     background-color: var(--start-color);
+    box-shadow: 0 0 5px var(--start-color);
+
+
 }
-.finish {
+.finish::before {
     background-color: var(--finish-color);
+    box-shadow: 0 0 5px var(--finish-color);
+
 }
 
-.visited {
-    animation-name: visitedAnimation;
+.visited-astar {
+    animation-name: visitedAnimation1;
     animation-duration: 1s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
-    
+}
+.visited-dij {
+    animation-name: visitedAnimation2;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+}
+.visited-astar.visited-dij {
+    animation-name: visitedAnimation3;
 }
 
 .wall {
-    background-color: var(--wall-color);
+    background-color: var(--wall-color) !important;
     border: #252525 solid 1px;
 }
+.wall.visited-astar, .wall.visited-dij {
+    opacity: .8;
+}
 
-.path {
+.path-dij {
+    position: relative;
+}
+.path-dij::after {
+    z-index: 1;
+    position: absolute;
+    content: '';
+    inset: 0;
+    --path-color: var(--path-color-dij);
     animation-name: pathAnimation;
     animation-duration: .4s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--path-color);
 }
 
-@keyframes visitedAnimation {
+.path-astar {
+    position: relative;
+}
+.path-astar::after {
+    z-index: 1;
+    position: absolute;
+    content: '';
+    inset: 0;
+    --path-color: var(--path-color-astar);
+    animation-name: pathAnimation;
+    animation-duration: .4s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--path-color);
+
+}
+
+.path-astar.path-dij::after {
+    --path-color: var(--path-color-overlap);
+    animation-name: pathAnimation;
+}
+
+@keyframes visitedAnimation1 {
     0%{
         transform: scale(0);
         border-radius: 100%;
@@ -177,7 +247,47 @@ body {
 
     100%{
         transform: scale(1);
-        background-color: var(--visited-node-color);
+        background-color: var(--visited-node-color-astar);
+    }
+}
+
+@keyframes visitedAnimation2 {
+    0%{
+        transform: scale(0);
+        border-radius: 100%;
+    }
+
+    50%{
+        background-color: rgb(164, 237, 255);
+    }
+    
+    75%{
+        transform: scale(1.2);
+    }
+
+    100%{
+        transform: scale(1);
+        background-color: var(--visited-node-color-dij);
+    }
+}
+
+@keyframes visitedAnimation3 {
+    0%{
+        transform: scale(0);
+        border-radius: 100%;
+    }
+
+    50%{
+        background-color: rgb(255, 164, 247);
+    }
+    
+    75%{
+        transform: scale(1.2);
+    }
+
+    100%{
+        transform: scale(1);
+        background-color: var(--visited-node-color-overlap);
     }
 }
 
@@ -185,7 +295,6 @@ body {
     0%{
         transform: scale(0);
         border-radius: 100%;
-
     }
 
     50%{

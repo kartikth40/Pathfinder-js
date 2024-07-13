@@ -1,5 +1,4 @@
 export default function visualizeAStar(grid, startNode, finishNode) {
-    document.querySelector("#start-visualization").classList.add("disable-button")
     const visitedNodesInOrder = AStar(startNode, finishNode, grid)
     const shortestPathInOrder = getShortestPathInOrder(finishNode)
     animateAlgo(visitedNodesInOrder, shortestPathInOrder)
@@ -22,7 +21,7 @@ function AStar(startNode, finishNode, grid) {
         if (!!closestNode.isWall) continue
         if (closestNode.gScore === Infinity) return visitedNodesInOrder
 
-        closestNode.isVisited = true
+        closestNode.isVisited.astar = true
         visitedNodesInOrder.push(closestNode)
         if (closestNode === finishNode) return visitedNodesInOrder
         updateNeighborNodes(grid, finishNode, closestNode)
@@ -42,7 +41,7 @@ function animateAlgo(visitedNodesInOrder, shortestPathInOrder) {
         if (visitedNodesInOrder[i] === undefined) console.log(i)
         setTimeout(() => {
             const node = visitedNodesInOrder[i]
-            document.getElementById(node.id).classList.add("visited")
+            document.getElementById(node.id).classList.add("visited-astar")
         }, 10 * i);
     }
 }
@@ -54,8 +53,14 @@ function animateShortestPath(shortestPathInOrder) {
     }
     for (let i = 1; i < shortestPathInOrder.length - 1; i++) {
         setTimeout(() => {
+            if(i === 1) {
+                document.querySelector('.start').classList.add('animate')
+            }
+            else if(i === shortestPathInOrder.length-2) {
+                document.querySelector('.finish').classList.add('animate')
+            }
             const node = shortestPathInOrder[i]
-            document.getElementById(node.id).classList.add("path")
+            document.getElementById(node.id).classList.add("path-astar")
         }, 10 * 5 * i);
     }
 }
@@ -69,7 +74,7 @@ function updateNeighborNodes(grid, finishNode, node) {
     neighbors.forEach(neighbor => {
         neighbor.gScore = node.gScore + 1
         neighbor.hScore = Math.abs(neighbor.row - finishNode.row) + Math.abs(neighbor.col - finishNode.col)
-        neighbor.prevNode = node
+        neighbor.prevNode.astar = node
     })
 }
 
@@ -77,11 +82,11 @@ function getNeighbors(grid, node) {
     const neighbors = []
     const { row, col } = node
     if (row > 0) neighbors.push(grid[row - 1][col])
-    if (col < grid.length - 1) neighbors.push(grid[row][col + 1])
+    if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1])
     if (row < grid.length - 1) neighbors.push(grid[row + 1][col])
     if (col > 0) neighbors.push(grid[row][col - 1])
 
-    return neighbors.filter(neighbor => !neighbor.isVisited)
+    return neighbors.filter(neighbor => !neighbor.isVisited.astar)
 }
 
 function getShortestPathInOrder(finishNode) {
@@ -89,7 +94,7 @@ function getShortestPathInOrder(finishNode) {
     let currentNode = finishNode
     while (currentNode !== null) {
         shortestPathInOrder.unshift(currentNode)
-        currentNode = currentNode.prevNode
+        currentNode = currentNode.prevNode.astar
     }
     return shortestPathInOrder
 }

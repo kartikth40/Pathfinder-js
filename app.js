@@ -1,17 +1,20 @@
 import visualizeDijkstra from "./dijkstra.js"
 import visualizeAStar from "./A_star.js"
 
-const mazeSize = 30
+const ratio = 2.5
+const mazeCols = 70
+const mazeRows = mazeCols / ratio
 const grid = []
 let isPressed = false
 let isStarted = false
+let dijDone = false
+let astarDone = false
 let startNode = []
 let finishNode = []
 let myStorage = window.sessionStorage
 if(myStorage.getItem("algo") === null) myStorage.setItem("algo", "Dijkstra")
 let algo = myStorage.getItem("algo")
 document.querySelector("#select-algo").value = algo
-console.log(algo)
 
 main()
 
@@ -23,28 +26,33 @@ function main() {
 }
 
 function initializeGrid() {
-
-    for (let row = 0; row < mazeSize; row++) {
+    for (let row = 0; row < mazeRows; row++) {
         const currentRow = []
-        for (let col = 0; col < mazeSize; col++) {
+        for (let col = 0; col < mazeCols; col++) {
             const currentNode = {
                 row,
                 col,
                 id: row + "-" + col,
                 isStart: false,
                 isFinish: false,
-                isVisited: false,
+                isVisited: {
+                    dij: false,
+                    astar: false
+                },
                 isWall: false,
                 distance: Infinity,
-                prevNode: null
+                prevNode: {
+                    dij: null,
+                    astar: null
+                }
             }
             currentRow.push(currentNode)
         }
         grid.push(currentRow)
     }
 
-    for (let i = 0; i < mazeSize; i++) {
-        for (let j = 0; j < mazeSize; j++) {
+    for (let i = 0; i < mazeRows; i++) {
+        for (let j = 0; j < mazeCols; j++) {
             let div = document.createElement("div")
             div.classList.add("node")
             div.id = i + "-" + j
@@ -55,15 +63,30 @@ function initializeGrid() {
 
 
 function setupVisualizerBTN() {
-    document.querySelector("#start-visualization").addEventListener("click", startVis)
+    if((algo === "Dijkstra" && !dijDone) || (algo === "A Star" && !astarDone)) {
+        document.querySelector("#start-visualization").addEventListener("click", startVis)
+        document.querySelector("#start-visualization").classList.remove("disable-button")
+        isStarted = false
+    }
 }
 
 function startVis() {
     if (!Array.isArray(startNode) && !Array.isArray(finishNode)) {
         isStarted = true
-        if(algo === "Dijkstra") visualizeDijkstra(grid, startNode, finishNode)
-        else visualizeAStar(grid, startNode, finishNode)
-        document.querySelector("#start-visualization").removeEventListener("click", startVis)
+        if(algo === "Dijkstra" && !dijDone) {
+            visualizeDijkstra(grid, startNode, finishNode)
+            dijDone = true
+        }
+        else if(algo === "A Star" && !astarDone) {
+            visualizeAStar(grid, startNode, finishNode)
+            astarDone = true
+        }
+        if((dijDone && astarDone) || (algo === "Dijkstra" && dijDone) || (algo === "A Star" && astarDone)) {
+            document.querySelector("#start-visualization").removeEventListener("click", startVis)
+            document.querySelector("#start-visualization").classList.add("disable-button")
+            isStarted = true
+        }
+        else isStarted = false
     }
     else alert("ADD START AND END NODES")
 }
@@ -78,10 +101,9 @@ document.querySelectorAll(".dropdown-element").forEach((element) => {
     element.addEventListener("click", e => {
         algo = e.target.innerText
         myStorage.setItem("algo", algo)
-document.querySelector("#select-algo").value = algo
-document.querySelector(".dropdown-content").classList.toggle("show")
-
-
+        document.querySelector("#select-algo").value = algo
+        document.querySelector(".dropdown-content").classList.toggle("show")
+        setupVisualizerBTN()
     })
 })
 
