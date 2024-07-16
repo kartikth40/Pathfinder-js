@@ -2,7 +2,7 @@ import visualizeDijkstra from "./dijkstra.js"
 import visualizeAStar from "./A_star.js"
 
 const ratio = 2.5
-const mazeCols = 70
+const mazeCols = 50
 const mazeRows = mazeCols / ratio
 const grid = []
 let isPressed = false

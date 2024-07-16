@@ -1,7 +1,7 @@
 * {
     --maze-height: 80vh;
     --maze-width: calc(2.5 * var(--maze-height));
-    --cols: 70;
+    --cols: 50;
     --node-size: calc(var(--maze-width)/var(--cols));
 
     --maze-color:        #ffffff;
