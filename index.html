@@ -10,7 +10,8 @@
 
 <body>
     <div class="container">
-        <div class="button-container">
+        <div class="top-shelf">
+           <div class="button-container">
             <div class="dropdown">
                 <input type="button" class="btn" id="select-algo" value="Dijkstra">
                 <div class="dropdown-arrow"></div>
@@ -23,7 +24,14 @@
             </div>
             <input type="button" class="btn" id="start-visualization" value="Start Visualization">
             <input type="button" class="btn" id="refresh-page" value="Reset The Board">
+            </div>
+            <div class="legends">
+                <span class="dij-legend"></span><p>Dijkskra</p>
+                <span class="astar-legend"></span><p>A Star</p>
+                <span class="mix-legend"></span><p>overlap</p>
+            </div> 
         </div>
+        
 
         <div class="maze-container" draggable="false" ondragstart="return false;"></div>
 

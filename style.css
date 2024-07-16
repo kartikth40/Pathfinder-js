@@ -7,9 +7,9 @@
     --maze-color:        #ffffff;
     --start-color:       #0dff00;
     --finish-color:      #ff684d;
-    --path-color-astar:        #87ff93;
+    --path-color-astar:        #59ff69;
     --path-color-dij:        #001aff;
-    --path-color-overlap:        #5ffff2;
+    --path-color-overlap:        #4bfdee;
     --visited-node-color-astar:rgba(217, 175, 255, .5);
     --visited-node-color-dij:rgb(175, 218, 255, .5);
     --visited-node-color-overlap:rgba(69, 87, 255, 0.5);
@@ -28,6 +28,38 @@ body {
     background-color: #fff;
     margin: 0;
     padding: 0;
+}
+
+.top-shelf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.legends {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.legends > p {
+    font-size: 15px;
+    margin: 0;
+}
+.dij-legend, .astar-legend, .mix-legend {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--path-color);
+}
+.dij-legend {
+    background-color: var(--path-color-dij);
+}
+.astar-legend {
+    background-color: var(--path-color-astar);
+}
+.mix-legend {
+    background-color: var(--path-color-overlap);
 }
 
 .button-container {
@@ -152,7 +184,6 @@ body {
     inset:0;
     content: '';
     z-index: 1;
-    border-radius: 50%;
     border: 2px solid black;
 }
 .start::before {
@@ -188,7 +219,7 @@ body {
     border: #252525 solid 1px;
 }
 .wall.visited-astar, .wall.visited-dij {
-    opacity: .8;
+    opacity: .7;
 }
 
 .path-dij {
@@ -198,7 +229,7 @@ body {
     z-index: 1;
     position: absolute;
     content: '';
-    inset: 0;
+    inset: 2.5px;
     --path-color: var(--path-color-dij);
     animation-name: pathAnimation;
     animation-duration: .4s;
@@ -215,9 +246,9 @@ body {
     z-index: 1;
     position: absolute;
     content: '';
-    inset: 0;
+    inset: 2.5px;
     --path-color: var(--path-color-astar);
-    animation-name: pathAnimation;
+    animation: pathAnimation;
     animation-duration: .4s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
@@ -278,7 +309,7 @@ body {
     }
 
     50%{
-        background-color: rgb(255, 164, 247);
+        background-color: rgb(102, 118, 255);
     }
     
     75%{
